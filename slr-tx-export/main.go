@@ -11,13 +11,18 @@ import (
 
 
 func main() {
+	f, err := os.Create("height-block-tx.csv")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	genesisBlockHash := "e8666c8715fafbfb095132deb1dd2af63fe14d3d7163715341d48feffab458cc"
 	block := dumpBlock(genesisBlockHash)
 	var hash string
 	var txs []slrparser.Transaction
 	txs = block.Block.Transactions
 		for i := 0;i<len(txs);i++ {
-			fmt.Printf("%v,%v,%v\n", block.BlockIndex.Height, block.Block.BlockHeader.Hash.String(), txs[i].Hash().String())
+			fmt.Fprintln(f, block.BlockIndex.Height, block.Block.BlockHeader.Hash.String(), txs[i].Hash().String())
 		}
 	
 	for {
@@ -30,8 +35,7 @@ func main() {
 		for i := 0;i<len(txs);i++ {
 			var txhash = strings.TrimSpace(txs[i].Hash().String())
 			if len(txhash) > 0 {
-				fmt.Printf("%v,%v,%v\n", block.BlockIndex.Height, block.Block.BlockHeader.Hash.String(), txhash)
-
+				fmt.Fprintln(f, block.BlockIndex.Height, block.Block.BlockHeader.Hash.String(), txs[i].Hash().String())
 			}
 		}
 		
